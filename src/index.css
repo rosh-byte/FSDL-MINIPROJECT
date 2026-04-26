@@ -1,0 +1,133 @@
+/* =====================================================
+   JUNK-TO-GEM — Global Styles
+   Design System: Earth tones + Fresh greens
+   ===================================================== */
+
+:root {
+  /* Color Palette */
+  --clr-primary:       #2D6A4F;
+  --clr-primary-light: #40916C;
+  --clr-primary-dark:  #1B4332;
+  --clr-secondary:     #52B788;
+  --clr-accent:        #95D5B2;
+  --clr-accent-light:  #D8F3DC;
+
+  --clr-earth:         #8B6914;
+  --clr-earth-light:   #F4E0B5;
+  --clr-amber:         #D4A017;
+
+  --clr-bg:            #F2FAF5;
+  --clr-surface:       #FFFFFF;
+  --clr-surface-2:     #F0F7F0;
+  --clr-border:        #C3E6CB;
+  --clr-border-light:  #E8F5E9;
+
+  --clr-text:          #1A2E22;
+  --clr-text-muted:    #5A7A68;
+  --clr-text-light:    #8BA898;
+
+  --clr-donate:        #2D6A4F;
+  --clr-request:       #7B4F2E;
+  --clr-request-bg:    #FDF3E7;
+
+  --clr-available:     #2D6A4F;
+  --clr-pickedup:      #9E9E9E;
+
+  /* Typography */
+  --font-heading: 'Outfit', sans-serif;
+  --font-body:    'Inter', sans-serif;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(45,106,79,0.08), 0 1px 2px rgba(45,106,79,0.06);
+  --shadow-md: 0 4px 16px rgba(45,106,79,0.12), 0 2px 6px rgba(45,106,79,0.08);
+  --shadow-lg: 0 10px 40px rgba(45,106,79,0.16), 0 4px 12px rgba(45,106,79,0.10);
+  --shadow-card: 0 2px 12px rgba(45,106,79,0.09);
+  --shadow-card-hover: 0 8px 32px rgba(45,106,79,0.18);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+}
+
+/* ---- Reset ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+ul { list-style: none; }
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--clr-border-light); }
+::-webkit-scrollbar-thumb { background: var(--clr-accent); border-radius: var(--radius-full); }
+
+/* ---- Utility classes ---- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.section-gap { margin-top: var(--space-12); }
+
+/* ---- Animations ---- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.04); }
+}
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.animate-fadeInUp  { animation: fadeInUp  0.5s ease both; }
+.animate-fadeIn    { animation: fadeIn    0.4s ease both; }
+.animate-slideInRight { animation: slideInRight 0.4s ease both; }
