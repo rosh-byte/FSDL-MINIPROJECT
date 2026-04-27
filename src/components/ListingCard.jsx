@@ -1,3 +1,4 @@
+import { Link, useNavigate } from 'react-router-dom';
 import './ListingCard.css';
 
 const CATEGORY_EMOJI = {
@@ -15,6 +16,7 @@ const CATEGORY_COLOR = {
 };
 
 function timeAgo(iso) {
+  if (!iso) return '';
   const diff = (Date.now() - new Date(iso)) / 1000;
   if (diff < 60)        return 'just now';
   if (diff < 3600)      return `${Math.floor(diff / 60)}m ago`;
@@ -23,14 +25,19 @@ function timeAgo(iso) {
 }
 
 export default function ListingCard({ listing, onToggleStatus, onDelete }) {
-  const { id, type, itemName, description, category, location, whatsapp,
+  const navigate = useNavigate();
+  const { id, type, itemName, description, category, location, whatsappNumber,
           status, image, createdAt, userName } = listing;
 
-  const waLink = `https://wa.me/${whatsapp}?text=${encodeURIComponent(
+  const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     `Hi! I'm interested in your item "${itemName}" listed on Junk-to-Gem 🌱`
   )}`;
 
   const isPicked = status === 'pickedup';
+
+  const handleEdit = () => {
+    navigate(`/add?edit=${id}`);
+  };
 
   return (
     <article className={`card animate-fadeInUp${isPicked ? ' card--picked' : ''}`} id={`listing-${id}`}>
@@ -98,10 +105,24 @@ export default function ListingCard({ listing, onToggleStatus, onDelete }) {
               {isPicked ? '↩ Reopen' : '✓ Mark Picked'}
             </button>
           )}
+          
+          <button
+            className="card__btn card__btn--ghost"
+            onClick={handleEdit}
+            title="Edit listing"
+            id={`edit-listing-${id}`}
+          >
+            ✏️ Edit
+          </button>
+
           {onDelete && (
             <button
               className="card__btn card__btn--danger"
-              onClick={() => onDelete(id)}
+              onClick={() => {
+                if (window.confirm('Are you sure you want to delete this listing?')) {
+                  onDelete(id);
+                }
+              }}
               id={`delete-listing-${id}`}
               title="Delete listing"
             >

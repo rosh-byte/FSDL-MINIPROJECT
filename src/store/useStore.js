@@ -1,20 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { MOCK_LISTINGS } from '../data/mockData';
 
-const STORAGE_KEY = 'junk_to_gem_listings';
+const API_BASE_URL = 'http://127.0.0.1:5000/api';
 const PROFILE_KEY = 'junk_to_gem_profile';
-
-// Initialize localStorage with mock data on first visit
-function initListings() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(MOCK_LISTINGS));
-    return MOCK_LISTINGS;
-  } catch {
-    return MOCK_LISTINGS;
-  }
-}
 
 function initProfile() {
   try {
@@ -27,42 +14,99 @@ function initProfile() {
 }
 
 export function useStore() {
-  const [listings, setListings] = useState(initListings);
+  const [listings, setListings] = useState([]);
   const [profile, setProfile]   = useState(initProfile);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
 
-  // Persist listings
+  // Fetch listings from API
+  const fetchListings = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_BASE_URL}/listings`);
+      if (!res.ok) throw new Error('Failed to fetch listings');
+      const data = await res.json();
+      setListings(data);
+    } catch (err) {
+      setError(err.message);
+      console.error('Fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
-  }, [listings]);
+    fetchListings();
+  }, [fetchListings]);
 
-  // Persist profile
+  // Persist profile locally
   useEffect(() => {
     localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
   }, [profile]);
 
-  const addListing = useCallback((listing) => {
-    const newListing = {
-      ...listing,
-      id: `listing-${Date.now()}`,
-      status: 'available',
-      createdAt: new Date().toISOString(),
-    };
-    setListings((prev) => [newListing, ...prev]);
-    return newListing;
+  const addListing = useCallback(async (listing) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/listings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(listing),
+      });
+      if (!res.ok) throw new Error('Failed to create listing');
+      const newListing = await res.json();
+      setListings((prev) => [newListing, ...prev]);
+      return newListing;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const toggleStatus = useCallback((id) => {
-    setListings((prev) =>
-      prev.map((l) =>
-        l.id === id
-          ? { ...l, status: l.status === 'available' ? 'pickedup' : 'available' }
-          : l
-      )
-    );
+  const updateListing = useCallback(async (id, updates) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/listings/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (!res.ok) throw new Error('Failed to update listing');
+      const updated = await res.json();
+      setListings((prev) => prev.map((l) => (l.id === id ? updated : l)));
+      return updated;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const deleteListing = useCallback((id) => {
-    setListings((prev) => prev.filter((l) => l.id !== id));
+  const toggleStatus = useCallback(async (id) => {
+    const listing = listings.find((l) => l.id === id);
+    if (!listing) return;
+
+    const newStatus = listing.status === 'available' ? 'pickedup' : 'available';
+    return updateListing(id, { status: newStatus });
+  }, [listings, updateListing]);
+
+  const deleteListing = useCallback(async (id) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/listings/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Failed to delete listing');
+      setListings((prev) => prev.filter((l) => l.id !== id));
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const updateProfile = useCallback((updates) => {
@@ -72,9 +116,13 @@ export function useStore() {
   return {
     listings,
     profile,
+    loading,
+    error,
     addListing,
+    updateListing,
     toggleStatus,
     deleteListing,
     updateProfile,
+    refreshListings: fetchListings
   };
 }

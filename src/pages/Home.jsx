@@ -1,12 +1,13 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
 import FilterBar from '../components/FilterBar';
 import ListingCard from '../components/ListingCard';
 import { useAppStore } from '../context/StoreContext';
 import './Home.css';
 
 export default function Home() {
-  const { listings, toggleStatus } = useAppStore();
+  const { listings, loading, error, toggleStatus, deleteListing } = useAppStore();
   const [search,     setSearch]     = useState('');
   const [category,   setCategory]   = useState('All');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -52,26 +53,28 @@ export default function Home() {
               🙋 Request an Item
             </Link>
           </div>
-          <div className="hero__stats">
-            <div className="hero__stat">
-              <span className="hero__stat-num">{listings.length}</span>
-              <span className="hero__stat-label">Listings</span>
+          {!loading && (
+            <div className="hero__stats">
+              <div className="hero__stat">
+                <span className="hero__stat-num">{listings.length}</span>
+                <span className="hero__stat-label">Listings</span>
+              </div>
+              <div className="hero__stat-divider" />
+              <div className="hero__stat">
+                <span className="hero__stat-num">
+                  {listings.filter((l) => l.status === 'available').length}
+                </span>
+                <span className="hero__stat-label">Available Now</span>
+              </div>
+              <div className="hero__stat-divider" />
+              <div className="hero__stat">
+                <span className="hero__stat-num">
+                  {listings.filter((l) => l.status === 'pickedup').length}
+                </span>
+                <span className="hero__stat-label">Items Reused</span>
+              </div>
             </div>
-            <div className="hero__stat-divider" />
-            <div className="hero__stat">
-              <span className="hero__stat-num">
-                {listings.filter((l) => l.status === 'available').length}
-              </span>
-              <span className="hero__stat-label">Available Now</span>
-            </div>
-            <div className="hero__stat-divider" />
-            <div className="hero__stat">
-              <span className="hero__stat-num">
-                {listings.filter((l) => l.status === 'pickedup').length}
-              </span>
-              <span className="hero__stat-label">Items Reused</span>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -86,19 +89,33 @@ export default function Home() {
         {/* Results header */}
         <div className="browse__header">
           <p className="browse__count">
-            {filtered.length === 0
-              ? 'No listings found'
-              : `${filtered.length} listing${filtered.length !== 1 ? 's' : ''} found`}
+            {loading ? 'Fetching listings...' : 
+             filtered.length === 0
+               ? 'No listings found'
+               : `${filtered.length} listing${filtered.length !== 1 ? 's' : ''} found`}
           </p>
           <Link to="/add" className="browse__add-link" id="browse-add-link">+ Add yours</Link>
         </div>
 
-        {/* Grid */}
-        {filtered.length > 0 ? (
+        {/* State handling */}
+        {loading ? (
+          <LoadingSpinner message="Bringing you the latest gems..." />
+        ) : error ? (
+          <div className="error-state">
+            <div className="error-state__icon">⚠️</div>
+            <h2 className="error-state__title">Connection issue</h2>
+            <p className="error-state__desc">{error}</p>
+            <button onClick={() => window.location.reload()} className="error-state__btn">Try Again</button>
+          </div>
+        ) : filtered.length > 0 ? (
           <div className="listings-grid">
             {filtered.map((listing, i) => (
               <div key={listing.id} style={{ animationDelay: `${i * 60}ms` }}>
-                <ListingCard listing={listing} onToggleStatus={toggleStatus} />
+                <ListingCard 
+                  listing={listing} 
+                  onToggleStatus={toggleStatus} 
+                  onDelete={deleteListing}
+                />
               </div>
             ))}
           </div>
