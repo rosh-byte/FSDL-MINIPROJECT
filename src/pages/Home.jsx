@@ -6,11 +6,26 @@ import ListingCard from '../components/ListingCard';
 import { useAppStore } from '../context/StoreContext';
 import './Home.css';
 
+const QUOTES = [
+  { text: "The greatest threat to our planet is the belief that someone else will save it.", author: "Robert Swan" },
+  { text: "There is no such thing as 'away'. When we throw anything away, it must go somewhere.", author: "Annie Leonard" },
+  { text: "We don't need a handful of people doing zero waste perfectly. We need millions of people doing it imperfectly.", author: "Anne-Marie Bonneau" },
+  { text: "Earth provides enough to satisfy every man's needs, but not every man's greed.", author: "Mahatma Gandhi" },
+  { text: "The environment is where we all meet; where all have a mutual interest; it is the one thing all of us share.", author: "Lady Bird Johnson" },
+  { text: "Waste isn't waste until we waste it.", author: "Will.i.am" },
+  { text: "Buy less, choose well, make it last.", author: "Vivienne Westwood" },
+  { text: "The most environmentally friendly product is the one you didn't buy.", author: "Joshua Becker" },
+];
+
 export default function Home() {
   const { listings, loading, error, toggleStatus, deleteListing } = useAppStore();
   const [search,     setSearch]     = useState('');
   const [category,   setCategory]   = useState('All');
   const [typeFilter, setTypeFilter] = useState('all');
+
+  const randomQuotes = useMemo(() => {
+    return [...QUOTES].sort(() => 0.5 - Math.random()).slice(0, 3);
+  }, []);
 
   const filtered = useMemo(() => {
     return listings.filter((l) => {
@@ -146,18 +161,12 @@ export default function Home() {
       {/* Environmental Quotes */}
       <section className="quotes container">
         <div className="quotes__grid">
-          <div className="quote-card">
-            <p className="quote-card__text">"The greatest threat to our planet is the belief that someone else will save it."</p>
-            <cite className="quote-card__author">— Robert Swan</cite>
-          </div>
-          <div className="quote-card">
-            <p className="quote-card__text">"There is no such thing as 'away'. When we throw anything away, it must go somewhere."</p>
-            <cite className="quote-card__author">— Annie Leonard</cite>
-          </div>
-          <div className="quote-card">
-            <p className="quote-card__text">"We don't need a handful of people doing zero waste perfectly. We need millions of people doing it imperfectly."</p>
-            <cite className="quote-card__author">— Anne-Marie Bonneau</cite>
-          </div>
+          {randomQuotes.map((q, i) => (
+            <div key={i} className="quote-card">
+              <p className="quote-card__text">"{q.text}"</p>
+              <cite className="quote-card__author">— {q.author}</cite>
+            </div>
+          ))}
         </div>
       </section>
     </main>
