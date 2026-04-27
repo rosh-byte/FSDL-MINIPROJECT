@@ -214,3 +214,66 @@
   .listings-grid { grid-template-columns: 1fr; }
   .sdg-banner__inner { flex-direction: column; text-align: center; }
 }
+
+/* ---- Environmental Quotes ---- */
+.quotes {
+  padding: 0 var(--space-6) var(--space-16);
+}
+
+.quotes__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+}
+
+.quote-card {
+  background: var(--clr-surface);
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--clr-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.quote-card::before {
+  content: '“';
+  position: absolute;
+  top: -0.5rem;
+  left: 1.5rem;
+  font-size: 6rem;
+  color: var(--clr-primary);
+  opacity: 0.08;
+  font-family: serif;
+  line-height: 1;
+}
+
+.quote-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--clr-primary-light);
+  box-shadow: var(--shadow-md);
+}
+
+.quote-card__text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--clr-text);
+  margin-bottom: var(--space-6);
+  font-style: italic;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
+.quote-card__author {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--clr-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-style: normal;
+}
+

@@ -142,6 +142,24 @@ export default function Home() {
           <Link to="/add" className="sdg-banner__btn" id="sdg-cta-btn">Join the Movement →</Link>
         </div>
       </section>
+
+      {/* Environmental Quotes */}
+      <section className="quotes container">
+        <div className="quotes__grid">
+          <div className="quote-card">
+            <p className="quote-card__text">"The greatest threat to our planet is the belief that someone else will save it."</p>
+            <cite className="quote-card__author">— Robert Swan</cite>
+          </div>
+          <div className="quote-card">
+            <p className="quote-card__text">"There is no such thing as 'away'. When we throw anything away, it must go somewhere."</p>
+            <cite className="quote-card__author">— Annie Leonard</cite>
+          </div>
+          <div className="quote-card">
+            <p className="quote-card__text">"We don't need a handful of people doing zero waste perfectly. We need millions of people doing it imperfectly."</p>
+            <cite className="quote-card__author">— Anne-Marie Bonneau</cite>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
